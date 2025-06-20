@@ -33,7 +33,7 @@ jobs:
       - name: Build
         run: |
           go build -v -o vault-plugin-database-rabbitmq-linux-amd64 \
-          -ldflags "-X github.com/zigmund/vault-database-rabbitmq/plugin.Version=${{ github.ref_name }}" \
+          -ldflags "-X github.com/zigmund/vault-plugin-database-rabbitmq/plugin.Version=${{ github.ref_name }}" \
           main.go
 
       - name: generate sha256sums
