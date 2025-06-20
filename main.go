@@ -4,7 +4,7 @@ import (
 	"github.com/hashicorp/vault/api"
 	"github.com/hashicorp/vault/sdk/database/dbplugin/v5"
 	log "github.com/sirupsen/logrus"
-	"github.com/zigmund/vault-database-rabbitmq/rabbitmq"
+	"github.com/zigmund/vault-database-rabbitmq/plugin"
 	"os"
 )
 
@@ -15,5 +15,5 @@ func main() {
 		log.WithError(err).Fatal("failed to parse args")
 	}
 
-	dbplugin.ServeMultiplex(rabbitmq.New)
+	dbplugin.ServeMultiplex(plugin.New)
 }

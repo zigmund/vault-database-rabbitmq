@@ -19,7 +19,7 @@ This database plugin utilizes RabbitMQ http api for user management, so [RabbitM
     ```bash
     zigmund@bug ~ % vault write sys/plugins/catalog/database/rabbitmq-database-plugin \
       sha256="<SHA256 sum of plugin binary>" \
-      command="vault-plugin-database-rabbitmq"`
+      command="vault-plugin-database-rabbitmq"
     ```
 5. Verify plugin state:
     ```bash
