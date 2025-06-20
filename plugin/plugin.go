@@ -1,4 +1,4 @@
-package rabbitmq
+package plugin
 
 import (
 	"bytes"
@@ -47,12 +47,13 @@ type (
 
 const (
 	pluginTypeName          = "rabbitmq"
-	pluginVersion           = "v0.0.1-alpha"
 	defaultUserNameTemplate = `{{ printf "v-%s-%s-%s-%s" (.DisplayName | truncate 15) (.RoleName | truncate 15) (random 20) (unix_time) | replace "." "-" | truncate 100 }}`
 )
 
-// Interface implementation checks
 var (
+	Version string = "dev"
+
+	// Interface implementation checks
 	_ dbplugin.Database       = (*database)(nil)
 	_ logical.PluginVersioner = (*database)(nil)
 )
@@ -215,7 +216,7 @@ func (db *database) Close() error {
 }
 
 func (db *database) PluginVersion() logical.PluginVersion {
-	return logical.PluginVersion{Version: pluginVersion}
+	return logical.PluginVersion{Version: Version}
 }
 
 // SecretValues - маппинг подмены секретов в логах и ответах
