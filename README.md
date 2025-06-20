@@ -62,15 +62,15 @@ The plugin can be used as any other builtin database plugin. See also: [Database
     zigmund@bug ~ % vault write database/config/my-rabbitmq \
         plugin_name=rabbitmq-database-plugin \
         allowed_roles="my-role" \
-        connection_url="http://rabbitmq-host:15672"
+        connection_url="http://rabbitmq-host:15672" \
         username="vault" \
         password="vault-password" \
         insecure_skip_verify=true \
         timeout=15s
     ```
     
-    `insecure_skip_verify` - optional param in case of using self-signed certs in RabbitMQ TLS endpoint.
-    `timeout` - optional param to override default 5s timeout. 
+    - `insecure_skip_verify` - optional param in case of using self-signed certs in RabbitMQ TLS endpoint.
+    - `timeout` - optional param to override default 5s timeout. 
 4. Create role with user tags and permissions in creation statements:
     ```bash
     zigmund@bug ~ % vault write database/roles/my-role
@@ -86,7 +86,7 @@ The plugin can be used as any other builtin database plugin. See also: [Database
       "tags": []string - array of user tags
       "permissions": []struct - array of permissions: 
         {
-          "vhost": string - vhost,
+          "vhost": string - vhost
           "read": string - regex for read access
           "write": string - regex for write access
           "configure": string - regex for configure access
@@ -94,7 +94,7 @@ The plugin can be used as any other builtin database plugin. See also: [Database
     }
     ```
     See also: [Authentication, Authorisation, Access Control](https://www.rabbitmq.com/docs/access-control)
-5. Now you can use generate credentials:
+5. Now you can generate credentials:
     ```bash
     zigmund@bug ~ % vault read database/creds/my-role
     Key                Value

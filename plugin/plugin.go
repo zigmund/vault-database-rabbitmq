@@ -51,6 +51,7 @@ const (
 )
 
 var (
+	// Version - will be set during build
 	Version string = "dev"
 
 	// Interface implementation checks
@@ -58,12 +59,14 @@ var (
 	_ logical.PluginVersioner = (*database)(nil)
 )
 
-// New - dbplugin.Factory implementation
+// New - returns new dbplugin.Database implementation
+// dbplugin.Factory implementation
 func New() (interface{}, error) {
 	db := &database{}
 	return dbplugin.NewDatabaseErrorSanitizerMiddleware(db, db.secretValues), nil
 }
 
+// Initialize - initializes RabbitMQ api client with config provided
 func (db *database) Initialize(_ context.Context, req dbplugin.InitializeRequest) (dbplugin.InitializeResponse, error) {
 	c := &config{
 		UsernameTemplate: defaultUserNameTemplate,
@@ -125,6 +128,7 @@ func (db *database) Initialize(_ context.Context, req dbplugin.InitializeRequest
 	return resp, nil
 }
 
+// NewUser - creates user in RabbitMQ and updates permissions, according to creation statement
 func (db *database) NewUser(_ context.Context, req dbplugin.NewUserRequest) (dbplugin.NewUserResponse, error) {
 	username, err := db.generateUsername(req.UsernameConfig)
 	if err != nil {
@@ -174,6 +178,7 @@ func (db *database) NewUser(_ context.Context, req dbplugin.NewUserRequest) (dbp
 	}, nil
 }
 
+// UpdateUser - updates user in RabbitMQ
 func (db *database) UpdateUser(_ context.Context, req dbplugin.UpdateUserRequest) (dbplugin.UpdateUserResponse, error) {
 	if req.CredentialType != dbplugin.CredentialTypePassword || req.Password == nil {
 		return dbplugin.UpdateUserResponse{}, fmt.Errorf("only supported credential type: %s", dbplugin.CredentialTypePassword.String())
@@ -195,10 +200,10 @@ func (db *database) UpdateUser(_ context.Context, req dbplugin.UpdateUserRequest
 	return dbplugin.UpdateUserResponse{}, nil
 }
 
+// DeleteUser - delete user from RabbitMQ
 func (db *database) DeleteUser(_ context.Context, req dbplugin.DeleteUserRequest) (dbplugin.DeleteUserResponse, error) {
 	if _, err := db.client.DeleteUser(req.Username); err != nil {
 		return dbplugin.DeleteUserResponse{}, fmt.Errorf("error deleting user: %s", err)
-
 	}
 
 	log.WithField("username", req.Username).Info("user deleted")
@@ -206,20 +211,24 @@ func (db *database) DeleteUser(_ context.Context, req dbplugin.DeleteUserRequest
 	return dbplugin.DeleteUserResponse{}, nil
 }
 
+// Type - returns database plugin type
 func (db *database) Type() (string, error) {
 	return pluginTypeName, nil
 }
 
+// Close - should close connection, but in out care do nothing
 func (db *database) Close() error {
 	db.client = nil
 	return nil
 }
 
+// PluginVersion - returns plugin version
+// logical.PluginVersioner implementation
 func (db *database) PluginVersion() logical.PluginVersion {
 	return logical.PluginVersion{Version: Version}
 }
 
-// SecretValues - маппинг подмены секретов в логах и ответах
+// SecretValues - mapping for secrets sanitizer
 func (db *database) secretValues() map[string]string {
 	return map[string]string{
 		db.client.Username: "[username]",
@@ -227,6 +236,7 @@ func (db *database) secretValues() map[string]string {
 	}
 }
 
+// generateUsername - generates username with template
 func (db *database) generateUsername(metadata dbplugin.UsernameMetadata) (string, error) {
 	username, err := db.usernameProducer.Generate(metadata)
 	if err != nil {
@@ -235,6 +245,8 @@ func (db *database) generateUsername(metadata dbplugin.UsernameMetadata) (string
 	return username, nil
 }
 
+// mapToStruct - converts map to struct
+// works only with strings and integers
 func mapToStruct(in map[string]interface{}, out interface{}) error {
 	buf := new(bytes.Buffer)
 	if err := json.NewEncoder(buf).Encode(in); err != nil {
