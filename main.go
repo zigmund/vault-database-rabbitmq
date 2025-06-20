@@ -4,7 +4,7 @@ import (
 	"github.com/hashicorp/vault/api"
 	"github.com/hashicorp/vault/sdk/database/dbplugin/v5"
 	log "github.com/sirupsen/logrus"
-	"github.com/zigmund/vault-database-rabbitmq/plugin"
+	"github.com/zigmund/vault-plugin-database-rabbitmq/plugin"
 	"os"
 )
 

@@ -1,4 +1,4 @@
-# vault-database-rabbitmq
+# vault-plugin-database-rabbitmq
 
 Custom [Hashicorp Vault](https://developer.hashicorp.com/vault) database plugin for RabbitMQ.
 

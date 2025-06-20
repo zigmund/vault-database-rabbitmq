@@ -1,4 +1,4 @@
-module github.com/zigmund/vault-database-rabbitmq
+module github.com/zigmund/vault-plugin-database-rabbitmq
 
 go 1.24.3
 
